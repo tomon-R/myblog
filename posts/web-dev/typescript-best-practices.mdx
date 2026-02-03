@@ -1,0 +1,301 @@
+---
+title: "2024年のTypeScriptベストプラクティス"
+date: "2024-03-05"
+description: "より安全で保守しやすいコードを書くための最も効果的なTypeScriptのパターンとプラクティスを学びます。"
+tags: ["typescript", "javascript", "ベストプラクティス"]
+author: "Your Name"
+readTime: "6 分"
+featured: true
+---
+
+# 2024年のTypeScriptベストプラクティス
+
+TypeScriptは、堅牢なJavaScriptアプリケーションを構築するための定番言語になっています。より良いTypeScriptコードを書くためのベストプラクティスを探求しましょう。
+
+## 1. Strictモードを使用する
+
+`tsconfig.json`で常にstrictモードを有効にしましょう：
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true
+  }
+}
+```
+
+これにより、すべての厳格な型チェックオプションが有効になり、潜在的なバグを早期に検出できます。
+
+## 2. 型推論を優先する
+
+可能な限りTypeScriptに型を推論させましょう：
+
+```typescript
+// ❌ 冗長な型注釈
+const message: string = "こんにちは";
+
+// ✅ 型推論
+const message = "こんにちは";
+
+// ✅ 有用な型注釈
+const messages: string[] = [];
+```
+
+## 3. anyの代わりにunknownを使用する
+
+`unknown`型は`any`よりも安全です：
+
+```typescript
+// ❌ 安全でない
+function processValue(value: any) {
+  return value.toUpperCase(); // 型チェックなし
+}
+
+// ✅ 型安全
+function processValue(value: unknown) {
+  if (typeof value === "string") {
+    return value.toUpperCase();
+  }
+  throw new Error("値は文字列である必要があります");
+}
+```
+
+## 4. ユニオン型を活用する
+
+ユニオン型はコードをより表現力豊かにします：
+
+```typescript
+type Status = "idle" | "loading" | "success" | "error";
+
+interface State {
+  status: Status;
+  data?: string;
+  error?: Error;
+}
+
+function handleState(state: State) {
+  switch (state.status) {
+    case "idle":
+      return "開始待ち...";
+    case "loading":
+      return "読み込み中...";
+    case "success":
+      return `データ: ${state.data}`;
+    case "error":
+      return `エラー: ${state.error?.message}`;
+  }
+}
+```
+
+## 5. 判別可能なユニオンを使用する
+
+判別可能なユニオンは、優れた型の絞り込みを提供します：
+
+```typescript
+type Result<T, E> =
+  | { success: true; value: T }
+  | { success: false; error: E };
+
+function processResult<T, E>(result: Result<T, E>) {
+  if (result.success) {
+    // TypeScriptはresult.valueが存在することを知っている
+    console.log(result.value);
+  } else {
+    // TypeScriptはresult.errorが存在することを知っている
+    console.error(result.error);
+  }
+}
+```
+
+## 6. 再利用可能なユーティリティ型を作成する
+
+ユーティリティ型のツールキットを構築しましょう：
+
+```typescript
+// すべてのプロパティを再帰的にオプショナルにする
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
+// 値の型でプロパティを選択
+type PickByType<T, U> = {
+  [P in keyof T as T[P] extends U ? P : never]: T[P];
+};
+
+// 使用例
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  age: number;
+}
+
+type StringProps = PickByType<User, string>;
+// 結果: { name: string; email: string }
+```
+
+## 7. constアサーションを使用する
+
+constアサーションは、読み取り専用のリテラル型を作成します：
+
+```typescript
+// ❌ 可変で、拡張された型
+const config = {
+  apiUrl: "https://api.example.com",
+  timeout: 5000,
+};
+// 型: { apiUrl: string; timeout: number }
+
+// ✅ 読み取り専用、リテラル型
+const config = {
+  apiUrl: "https://api.example.com",
+  timeout: 5000,
+} as const;
+// 型: { readonly apiUrl: "https://api.example.com"; readonly timeout: 5000 }
+```
+
+## 8. Reactコンポーネントを適切に型付けする
+
+Reactコンポーネントには適切な型を使用しましょう：
+
+```typescript
+import { ReactNode } from "react";
+
+// ✅ Propsインターフェース
+interface ButtonProps {
+  children: ReactNode;
+  onClick: () => void;
+  variant?: "primary" | "secondary";
+  disabled?: boolean;
+}
+
+// ✅ 型付けされたコンポーネント
+export function Button({
+  children,
+  onClick,
+  variant = "primary",
+  disabled = false,
+}: ButtonProps) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`btn btn-${variant}`}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+## 9. テンプレートリテラル型を使用する
+
+正確な文字列型を作成しましょう：
+
+```typescript
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type Route = "/users" | "/posts" | "/comments";
+
+type Endpoint = `${HttpMethod} ${Route}`;
+// "GET /users" | "GET /posts" | ... | "DELETE /comments"
+
+function request(endpoint: Endpoint, body?: unknown) {
+  const [method, route] = endpoint.split(" ");
+  // 実装
+}
+
+request("GET /users"); // ✅ 有効
+request("PATCH /users"); // ❌ 型エラー
+```
+
+## 10. エラー処理を適切に行う
+
+エラー処理を型付けしましょう：
+
+```typescript
+class AppError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public statusCode: number
+  ) {
+    super(message);
+    this.name = "AppError";
+  }
+}
+
+function handleError(error: unknown): string {
+  if (error instanceof AppError) {
+    return `[${error.code}] ${error.message}`;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "不明なエラーが発生しました";
+}
+```
+
+## 11. ブランド型を型安全性のために使用する
+
+構造的型システムで名目的型を作成しましょう：
+
+```typescript
+type UserId = string & { readonly __brand: "UserId" };
+type PostId = string & { readonly __brand: "PostId" };
+
+function createUserId(id: string): UserId {
+  return id as UserId;
+}
+
+function createPostId(id: string): PostId {
+  return id as PostId;
+}
+
+function getUser(id: UserId) {
+  // 実装
+}
+
+const userId = createUserId("user-123");
+const postId = createPostId("post-456");
+
+getUser(userId); // ✅ 有効
+getUser(postId); // ❌ 型エラー
+```
+
+## 12. 複雑な型をドキュメント化する
+
+より良いIDEサポートのためにJSDocコメントを使用しましょう：
+
+```typescript
+/**
+ * APIからのページネーションされたレスポンスを表します
+ * @template T - レスポンス内のアイテムの型
+ */
+interface PaginatedResponse<T> {
+  /** 現在のページのアイテムの配列 */
+  items: T[];
+  /** 現在のページ番号（1から始まる） */
+  page: number;
+  /** 総ページ数 */
+  totalPages: number;
+  /** すべてのページにわたるアイテムの総数 */
+  totalItems: number;
+}
+```
+
+## まとめ
+
+TypeScriptのベストプラクティスは言語の成長とともに進化しますが、これらの原則はより保守しやすく型安全なコードを書くのに役立ちます：
+
+1. strictモードを有効にする
+2. 型推論を活用する
+3. 判別可能なユニオンを使用する
+4. ユーティリティ型を作成する
+5. エラーを適切に型付けする
+6. 複雑な型をドキュメント化する
+
+覚えておいてください：TypeScriptはあなたを助けるツールであり、負担ではありません。より信頼性の高いコードと、より良い開発体験を実現するために使用しましょう！

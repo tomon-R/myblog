@@ -1,0 +1,27 @@
+import { CategoryRepository } from "@/domain/infras/CategoryRepository";
+import { PostRepository } from "@/domain/infras/PostRepository";
+import { CategoryService } from "@/domain/services/CategoryService";
+import { PostService } from "@/domain/services/PostService";
+
+import { config } from "@/lib/config";
+
+import { cache } from "react";
+
+export const getDomain = cache(() => {
+  const infras = {
+    categoryRepository: new CategoryRepository(config.filesystemConfig),
+    postRepository: new PostRepository(config.filesystemConfig),
+  };
+  const services = {
+    categoryService: new CategoryService({
+      categoryRepository: infras.categoryRepository,
+    }),
+    postService: new PostService({
+      postRepository: infras.postRepository,
+      categoryRepository: infras.categoryRepository,
+    }),
+  };
+  return {
+    services,
+  };
+});

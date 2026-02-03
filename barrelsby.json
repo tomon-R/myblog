@@ -1,0 +1,15 @@
+{
+  "directory": [
+    "./src/domain",
+    "./src/lib",
+    "./src/infrastructure",
+    "./src/app/_lib",
+    "./src/app/[locale]/_lib"
+  ],
+  "location": "all",
+  "local": true,
+  "delete": true,
+  "structure": "flat",
+  "include": [".*\\.ts$", ".*\\.tsx$"],
+  "exclude": [".*\\.d\\.ts$"]
+}
