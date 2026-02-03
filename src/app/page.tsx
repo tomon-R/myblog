@@ -1,10 +1,10 @@
-import { getDomain } from "@/app/domain";
+import { useDomain } from "@/app/domain";
+import HomePageClient from "@/components/_components/HomePageClient";
 import { appConfig } from "@/lib/config/instance";
 import { AppInfo, Context, PageInfo } from "@/lib/context";
-import HomePageClient from "@/components/_components/HomePageClient";
 
 export default async function HomePage() {
-  const { services } = getDomain();
+  const { services } = useDomain();
   const { categoryService } = services;
 
   const appInfo = new AppInfo(appConfig);

@@ -1,27 +1,25 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { MDXRemote } from "next-mdx-remote/rsc";
-import rehypeShiki from "rehype-shiki";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
-import { getDomain } from "@/app/domain";
+import { useDomain } from "@/app/domain";
+import { PostCard } from "@/components/_components/PostCard";
+import { PostMetadata } from "@/components/_components/PostMetadata";
 import { mdxComponents } from "@/components/mdx/MDXComponents";
 import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
-import { PostMetadata } from "@/components/_components/PostMetadata";
-import { PostCard } from "@/components/_components/PostCard";
+import { Category, Post } from "@/domain/models";
 import { appConfig } from "@/lib/config/instance";
 import { AppInfo, Context, PageInfo } from "@/lib/context";
-import { Category, Post } from "@/domain/models";
+import type { Metadata } from "next";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import rehypeKatex from "rehype-katex";
+import remarkMath from "remark-math";
 
 interface PostPageProps {
   params: Promise<{ slug: string[] }>;
@@ -29,7 +27,7 @@ interface PostPageProps {
 
 // すべてのカテゴリーを再帰的に取得するヘルパー関数
 async function getAllCategoriesRecursively(): Promise<Category[]> {
-  const { services } = getDomain();
+  const { services } = useDomain();
   const { categoryService } = services;
 
   const appInfo = new AppInfo(appConfig);
@@ -63,7 +61,7 @@ export async function generateStaticParams() {
   const allCategories = await getAllCategoriesRecursively();
   const allPosts: Post[] = [];
 
-  const { services } = getDomain();
+  const { services } = useDomain();
   const { postService } = services;
 
   const appInfo = new AppInfo(appConfig);
@@ -88,7 +86,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const postId = `${slug.join("/")}.mdx`;
 
-  const { services } = getDomain();
+  const { services } = useDomain();
   const { postService } = services;
 
   const appInfo = new AppInfo(appConfig);
@@ -121,11 +119,14 @@ export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
   const postId = `${slug.join("/")}.mdx`;
 
-  const { services } = getDomain();
+  const { services } = useDomain();
   const { postService, categoryService } = services;
 
   const appInfo = new AppInfo(appConfig);
-  const pageInfo = new PageInfo({ pageName: "Post", path: `/posts/${slug.join("/")}` });
+  const pageInfo = new PageInfo({
+    pageName: "Post",
+    path: `/posts/${slug.join("/")}`,
+  });
   const context = new Context({ app: appInfo }).set(pageInfo);
 
   let post: Post;
@@ -152,10 +153,11 @@ export default async function PostPage({ params }: PostPageProps) {
     if (categoryId) {
       const category = await categoryService.getById({ context, categoryId });
       if (category.posts && category.posts.length > 1) {
-        const allPosts = await postService.getAllByCategory({ context, category });
-        relatedPosts = allPosts
-          .filter((p) => p.id !== post.id)
-          .slice(0, 3);
+        const allPosts = await postService.getAllByCategory({
+          context,
+          category,
+        });
+        relatedPosts = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
       }
     }
   } catch (error) {
@@ -173,14 +175,19 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div key={index} className="contents">
                   <BreadcrumbItem>
                     {item.href ? (
-                      <Link href={item.href} className="transition-colors hover:text-foreground">
+                      <Link
+                        href={item.href}
+                        className="transition-colors hover:text-foreground"
+                      >
                         {item.label}
                       </Link>
                     ) : (
                       <BreadcrumbPage>{item.label}</BreadcrumbPage>
                     )}
                   </BreadcrumbItem>
-                  {index < breadcrumbItems.length - 1 && <BreadcrumbSeparator />}
+                  {index < breadcrumbItems.length - 1 && (
+                    <BreadcrumbSeparator />
+                  )}
                 </div>
               ))}
             </BreadcrumbList>
