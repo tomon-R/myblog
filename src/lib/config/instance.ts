@@ -8,6 +8,7 @@ export const appConfig = newAppConfig({
   appVersion: process.env.NEXT_PUBLIC_APP_VERSION,
   appDescription: process.env.NEXT_PUBLIC_APP_DESCRIPTION,
   env: process.env.NEXT_PUBLIC_APP_ENV!,
+  runtime: process.env.NEXT_RUNTIME,
 });
 
 export const filesystemConfig = newFilesystemConfig({

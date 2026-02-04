@@ -3,6 +3,7 @@ export interface AppConfig {
   readonly appVersion?: string;
   readonly appDescription?: string;
   readonly env: string;
+  readonly runtime?: string;
 }
 
 export function newAppConfig({
@@ -10,16 +11,19 @@ export function newAppConfig({
   appVersion,
   appDescription,
   env,
+  runtime,
 }: {
   appName: string;
   appVersion?: string;
   appDescription?: string;
   env: string;
+  runtime?: string;
 }) {
   return {
     appName,
     appVersion,
     appDescription,
     env,
+    runtime,
   } as const;
 }
