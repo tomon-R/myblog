@@ -10,7 +10,7 @@ import { cache } from "react";
 
 // Domain の使用宣言。 Domain 領域を初期化する。
 export const useDomain = cache(() => {
-  initLogger(config.appConfig);
+  initLogger(config);
 
   const infras = {
     categoryRepository: new CategoryRepository(config.filesystemConfig),

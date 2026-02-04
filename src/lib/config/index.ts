@@ -6,3 +6,4 @@ export * from "./AppConfig";
 export * from "./Config";
 export * from "./FilesystemConfig";
 export * from "./instance";
+export * from "./TelemetryConfig";

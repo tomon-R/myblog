@@ -1,6 +1,6 @@
 import pino from "pino";
 
-import { AppConfig } from "@/lib/config";
+import { Config } from "@/lib/config";
 import { LogObject } from "./logObject";
 
 export type Logger = pino.Logger;
@@ -8,13 +8,13 @@ export type Logger = pino.Logger;
 export let baseLogger: Logger;
 
 // Initializes baseLogger
-export function initLogger(conf: AppConfig) {
+export function initLogger(conf: Config) {
   // Skip if already initialized
   if (baseLogger) {
     return baseLogger;
   }
 
-  const isLocal = conf.env === "local";
+  const isLocal = conf.appConfig.env === "local";
 
   baseLogger = pino({
     timestamp: pino.stdTimeFunctions.isoTime,
@@ -55,7 +55,7 @@ export function initLogger(conf: AppConfig) {
 export function newLogger(records: LogObject): Logger {
   if (!baseLogger) {
     throw new Error(
-      "Logger not initialized. Call initLogger() in app/config.ts first."
+      "Logger not initialized. Call initLogger() in app/config.ts first.",
     );
   }
   return baseLogger.child(records);

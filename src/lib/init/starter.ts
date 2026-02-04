@@ -1,6 +1,6 @@
+import { CallStackInfo, Context, TraceInfo } from "@/lib/context";
 import { Logger, newLogger } from "@/lib/logger";
-import { startNewSpan } from "@/lib/trace";
-import { CallStackInfo, Context, TraceInfo } from "../context";
+import { startNewSpan } from "@/lib/telemetry";
 
 // Service 層関数にて Context を初期化し、 Logger を提供する補助関数
 
@@ -24,6 +24,7 @@ export function startService({
       name: `${className}.${methodName}`,
     });
     end = endFunc;
+
     const newTraceInfo = new TraceInfo({ tracer: superTraceInfo.tracer, span });
     context = context.set(newTraceInfo);
   }

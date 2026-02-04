@@ -1,6 +1,7 @@
 import { newAppConfig } from "./AppConfig";
 import { newConfig } from "./Config";
 import { newFilesystemConfig } from "./FilesystemConfig";
+import { newTelemetryConfig } from "./TelemetryConfig";
 
 export const appConfig = newAppConfig({
   appName: process.env.NEXT_PUBLIC_APP_NAME!,
@@ -15,7 +16,12 @@ export const filesystemConfig = newFilesystemConfig({
   reservedFilenames: process.env.NEXT_PUBLIC_APP_RESERVED_FILENAMES!.split(","),
 });
 
+export const telemetryConfig = newTelemetryConfig({
+  enabled: process.env.OTEL_TRACES_ENABLED === "true",
+});
+
 export const config = newConfig({
   appConfig,
   filesystemConfig,
+  telemetryConfig,
 });
