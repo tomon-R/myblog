@@ -10,17 +10,19 @@ export async function register() {
   await initTelemetry(config);
   baseLogger.info("OpenTelemetry SDK started successfully");
 
-  // 正常な終了時
-  process.on("SIGTERM", async () => {
-    await shutdownTelemetry();
-    baseLogger.info("OpenTelemetry SDK shut down successfully");
-    process.exit(0);
-  });
+  if (process.env.NEXT_MANUAL_SIG_HANDLE) {
+    // 正常な終了時
+    process.on("SIGTERM", async () => {
+      await shutdownTelemetry();
+      baseLogger.info("OpenTelemetry SDK shut down successfully");
+      process.exit(0);
+    });
 
-  // 中断終了時
-  process.on("SIGINT", async () => {
-    await shutdownTelemetry();
-    baseLogger.info("OpenTelemetry SDK shut down successfully");
-    process.exit(0);
-  });
+    // 中断終了時
+    process.on("SIGINT", async () => {
+      await shutdownTelemetry();
+      baseLogger.info("OpenTelemetry SDK shut down successfully");
+      process.exit(0);
+    });
+  }
 }
