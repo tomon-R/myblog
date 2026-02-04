@@ -4,8 +4,6 @@ import { ibmPlexSansJP, rajdhani } from "@/components/typography/fonts";
 import type { Metadata } from "next";
 import "./globals.css";
 
-export const runtime = "nodejs";
-
 export const metadata: Metadata = {
   title: config.appConfig.appName,
   description: config.appConfig.appDescription,
