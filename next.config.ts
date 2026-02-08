@@ -10,9 +10,7 @@ const nextConfig: NextConfig = {
   },
   pageExtensions: ["js", "jsx", "ts", "tsx"],
 
-  experimental: {
-    serverComponentsExternalPackages: ["pino"],
-  },
+  serverExternalPackages: ["pino"],
 };
 
 export default nextConfig;
