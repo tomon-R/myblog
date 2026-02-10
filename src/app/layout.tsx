@@ -18,16 +18,12 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${rajdhani.variable} ${ibmPlexSansJP.variable}`}
+      className={`${rajdhani.variable} ${ibmPlexSansJP.variable} warm`}
     >
       <body className="antialiased">
         <Header
           appName={config.appConfig.appName}
-          navigationItems={[
-            { link: "/", label: "Home" },
-            { link: "/", label: "Home2" },
-            { link: "/", label: "Home3" },
-          ]}
+          navigationItems={[{ link: "/", label: "Home" }]}
         />
         {children}
       </body>
