@@ -1,4 +1,5 @@
 import { useDomain } from "@/app/domain";
+import Hero from "@/app/Hero";
 import HomePageClient from "@/components/_components/HomePageClient";
 import { appConfig } from "@/lib/config/instance";
 import { AppInfo, Context, PageInfo } from "@/lib/context";
@@ -25,5 +26,15 @@ export default async function HomePage() {
     posts: category.posts,
   }));
 
-  return <HomePageClient categories={plainCategories} />;
+  return (
+    <>
+      <section>
+        <Hero
+          appName={appConfig.appName}
+          appDescription={appConfig.appDescription || ""}
+        />
+      </section>
+      <HomePageClient categories={plainCategories} />
+    </>
+  );
 }
