@@ -16,17 +16,17 @@ export default function Hero({ appName, appDescription }: HeroProps) {
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           animate={{
-            scale: [1, 1.2, 1],
+            scale: [1, 1.5, 1],
             rotate: [0, 90, 0],
             x: [0, 50, 0],
             y: [0, 30, 0],
           }}
           transition={{
-            duration: 20,
+            duration: 10,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute -top-1/2 -left-1/2 w-[800px] h-[800px] bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-full blur-3xl"
+          className="absolute -top-1/2 -left-1/2 w-[800px] h-[800px] bg-gradient-to-br from-primary via-primary/3 to-transparent rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -55,9 +55,6 @@ export default function Hero({ appName, appDescription }: HeroProps) {
           className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-gradient-to-r from-primary/5 to-accent/5 rounded-full blur-3xl"
         />
       </div>
-
-      {/* Grid Pattern Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
