@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${rajdhani.variable} ${ibmPlexSansJP.variable} warm`}
+      className={`${rajdhani.variable} ${ibmPlexSansJP.variable} warm-dark`}
     >
       <body className="antialiased">
         <Header
