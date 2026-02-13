@@ -2,31 +2,42 @@
 
 import { wdxlLubrifontJPN } from "@/components/typography/fonts";
 import { Typography } from "@/components/typography/Typography";
-import { motion } from "framer-motion";
+import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
 
 interface HeroProps {
   appName: string;
   appDescription: string;
 }
 
+const ANGULAR_VELOCITY = Math.PI; // rad/sec
+const MIN_ANGLE = -Math.PI * 2;
+const MAX_ANGLE = 0;
+const ANGLE_RANGE = MAX_ANGLE - MIN_ANGLE;
+const ORBIT_RADIUS = 200; // px
+
 export default function Hero({ appName, appDescription }: HeroProps) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotate = useMotionValue(0);
+
+  useAnimationFrame((time) => {
+    const t = ANGULAR_VELOCITY * (time / 1000);
+    const angle = MIN_ANGLE + (t % ANGLE_RANGE);
+    const deg = angle * (180 / Math.PI);
+
+    // 公転
+    x.set(ORBIT_RADIUS * Math.sin(angle) + window.innerWidth / 2);
+    y.set(ORBIT_RADIUS * Math.cos(angle) + 300);
+    // 自転
+    rotate.set(deg);
+  });
   return (
-    <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/10">
+    <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/10">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          animate={{
-            scale: [1, 1.5, 1],
-            rotate: [0, 90, 0],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -top-1/2 -left-1/2 w-[800px] h-[800px] bg-gradient-to-br from-primary via-primary/3 to-transparent rounded-full blur-3xl"
+          style={{ x, y, rotate }}
+          className="absolute w-[80px] h-[80px] bg-primary rounded-full"
         />
         <motion.div
           animate={{
