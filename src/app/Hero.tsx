@@ -3,42 +3,54 @@
 import { wdxlLubrifontJPN } from "@/components/typography/fonts";
 import { Typography } from "@/components/typography/Typography";
 import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
+import Star from "./_components/Star";
 
 interface HeroProps {
   appName: string;
   appDescription: string;
 }
 
-const ANGULAR_VELOCITY = Math.PI; // rad/sec
-const MIN_ANGLE = -Math.PI * 2;
-const MAX_ANGLE = 0;
+const ORBIT_RADIUS = 1000; // px
+const VELOCITY = 1000; // px/sec
+const ANGULAR_VELOCITY = VELOCITY / (2 * Math.PI * ORBIT_RADIUS); // rad/sec
+const MIN_ANGLE = (Math.PI * 3) / 5;
+const MAX_ANGLE = (Math.PI * 7) / 5;
 const ANGLE_RANGE = MAX_ANGLE - MIN_ANGLE;
-const ORBIT_RADIUS = 200; // px
+const STAR_COUNT = 8; // 星の数 (N個)
 
 export default function Hero({ appName, appDescription }: HeroProps) {
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const rotate = useMotionValue(0);
+  const radian = useMotionValue(0);
 
   useAnimationFrame((time) => {
     const t = ANGULAR_VELOCITY * (time / 1000);
-    const angle = MIN_ANGLE + (t % ANGLE_RANGE);
-    const deg = angle * (180 / Math.PI);
-
-    // 公転
-    x.set(ORBIT_RADIUS * Math.sin(angle) + window.innerWidth / 2);
-    y.set(ORBIT_RADIUS * Math.cos(angle) + 300);
-    // 自転
-    rotate.set(deg);
+    const newRadian = MIN_ANGLE + (t % ANGLE_RANGE);
+    radian.set(newRadian);
   });
   return (
     <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/10">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          style={{ x, y, rotate }}
-          className="absolute w-[80px] h-[80px] bg-primary rounded-full"
-        />
+        {/* 星のコンテナ (画面中央に配置) */}
+        <div className="absolute left-1/2 top-1/2">
+          {Array.from({ length: STAR_COUNT }).map((_, i) => {
+            // 各星の初期配置角度 (等間隔に配置)
+            const angleOffset = (i / STAR_COUNT) * Math.PI * 2;
+
+            return (
+              <Star
+                key={i}
+                radian={radian} // 全員で同じ MotionValue を共有
+                initialRadian={angleOffset}
+                minRadian={(-Math.PI * 6) / 10}
+                maxRadian={0}
+                centerX={0}
+                centerY={ORBIT_RADIUS}
+                radius={ORBIT_RADIUS}
+                size={32}
+              />
+            );
+          })}
+        </div>
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
