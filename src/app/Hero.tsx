@@ -2,55 +2,28 @@
 
 import { wdxlLubrifontJPN } from "@/components/typography/fonts";
 import { Typography } from "@/components/typography/Typography";
-import { motion, useAnimationFrame, useMotionValue } from "framer-motion";
-import Star from "./_components/Star";
+import { motion } from "framer-motion";
+import StarrySight from "./_components/StarrySight";
 
 interface HeroProps {
   appName: string;
   appDescription: string;
 }
 
-const ORBIT_RADIUS = 1000; // px
-const VELOCITY = 1000; // px/sec
-const ANGULAR_VELOCITY = VELOCITY / (2 * Math.PI * ORBIT_RADIUS); // rad/sec
-const MIN_ANGLE = (Math.PI * 3) / 5;
-const MAX_ANGLE = (Math.PI * 7) / 5;
-const ANGLE_RANGE = MAX_ANGLE - MIN_ANGLE;
-const STAR_COUNT = 8; // 星の数 (N個)
-
 export default function Hero({ appName, appDescription }: HeroProps) {
-  const radian = useMotionValue(0);
-
-  useAnimationFrame((time) => {
-    const t = ANGULAR_VELOCITY * (time / 1000);
-    const newRadian = MIN_ANGLE + (t % ANGLE_RANGE);
-    radian.set(newRadian);
-  });
   return (
     <section className="relative h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/5 via-background to-accent/10">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* 星のコンテナ (画面中央に配置) */}
-        <div className="absolute left-1/2 top-1/2">
-          {Array.from({ length: STAR_COUNT }).map((_, i) => {
-            // 各星の初期配置角度 (等間隔に配置)
-            const angleOffset = (i / STAR_COUNT) * Math.PI * 2;
-
-            return (
-              <Star
-                key={i}
-                radian={radian} // 全員で同じ MotionValue を共有
-                initialRadian={angleOffset}
-                minRadian={(-Math.PI * 6) / 10}
-                maxRadian={0}
-                centerX={0}
-                centerY={ORBIT_RADIUS}
-                radius={ORBIT_RADIUS}
-                size={32}
-              />
-            );
-          })}
-        </div>
+        {/* 星のコンテナ */}
+        <StarrySight
+          orbitRadius={2000}
+          velocity={100}
+          starCount={15}
+          starSize={64}
+          correctionFactor={1.3}
+          coefficientOfVariation={0.15}
+        />
         <motion.div
           animate={{
             scale: [1, 1.3, 1],
