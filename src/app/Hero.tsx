@@ -24,9 +24,10 @@ export default function Hero({ appName, appDescription }: HeroProps) {
           orbitRadius={2000}
           velocity={100}
           starCount={15}
-          starSize={64}
+          starSize={80}
           correctionFactor={1.3}
-          coefficientOfVariation={0.15}
+          coefficientOfRadiousVariation={0.15}
+          coefficientOfSizeVariation={0.4}
         />
         <motion.div
           animate={{

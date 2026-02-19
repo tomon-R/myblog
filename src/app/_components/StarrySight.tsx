@@ -10,7 +10,8 @@ interface StarrySightProps {
   velocity?: number;
   starCount?: number;
   starSize?: number;
-  coefficientOfVariation?: number;
+  coefficientOfRadiousVariation?: number;
+  coefficientOfSizeVariation?: number;
   correctionFactor?: number;
   starColor?: ColorToken;
 }
@@ -20,7 +21,8 @@ export default function StarrySight({
   velocity = 1000,
   starCount = 30,
   starSize = 32,
-  coefficientOfVariation = 0.3,
+  coefficientOfRadiousVariation = 0.3,
+  coefficientOfSizeVariation = 0.3,
   correctionFactor = 1.3,
   starColor,
 }: StarrySightProps) {
@@ -47,11 +49,21 @@ export default function StarrySight({
   const radiusOffsets = useMemo(
     () =>
       Array.from({ length: starCount }).map((_, i) => {
-        const randomFactor = Math.random() * coefficientOfVariation;
+        const randomFactor = Math.random() * coefficientOfRadiousVariation;
         const sign = Math.pow(-1, i);
         return orbitRadius * randomFactor * sign;
       }),
     [starCount, orbitRadius],
+  );
+
+  const starSizeOffsets = useMemo(
+    () =>
+      Array.from({ length: starCount }).map((_, i) => {
+        const randomFactor = Math.random() * coefficientOfSizeVariation;
+        const sign = Math.pow(-1, i);
+        return starSize * randomFactor * sign;
+      }),
+    [starCount, starSize],
   );
 
   useAnimationFrame((time) => {
@@ -64,6 +76,7 @@ export default function StarrySight({
       {Array.from({ length: starCount }).map((_, i) => {
         const angleOffset = MIN_ANGLE + (i / starCount) * ANGLE_RANGE;
         const starRadius = orbitRadius + radiusOffsets[i];
+        const size = starSize + starSizeOffsets[i];
 
         return (
           <Star
@@ -75,7 +88,7 @@ export default function StarrySight({
             centerX={0}
             centerY={orbitRadius}
             radius={starRadius}
-            size={starSize}
+            size={size}
             color={starColor}
           />
         );
