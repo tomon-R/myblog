@@ -1,11 +1,5 @@
 {
-  "directory": [
-    "./src/domain",
-    "./src/lib",
-    "./src/infrastructure",
-    "./src/app/_lib",
-    "./src/app/[locale]/_lib"
-  ],
+  "directory": ["./src/domain", "./src/lib"],
   "location": "all",
   "local": true,
   "delete": true,

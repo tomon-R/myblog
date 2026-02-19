@@ -1,3 +1,4 @@
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { config } from "@/lib/config";
 
 import { ibmPlexSansJP, rajdhani } from "@/components/typography/fonts";
@@ -18,14 +19,16 @@ export default function RootLayout({
   return (
     <html
       lang="ja"
-      className={`${rajdhani.variable} ${ibmPlexSansJP.variable} warm-dark`}
+      className={`${rajdhani.variable} ${ibmPlexSansJP.variable}`}
     >
       <body className="antialiased">
-        <Header
-          appName={config.appConfig.appName}
-          navigationItems={[{ link: "/", label: "Home" }]}
-        />
-        {children}
+        <ThemeProvider defaultTheme="default">
+          <Header
+            appName={config.appConfig.appName}
+            navigationItems={[{ link: "/", label: "Home" }]}
+          />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { resolveColor, type ColorToken } from "@/lib/color";
 import { motion, MotionValue, useTransform } from "framer-motion";
 
 interface StarProps {
@@ -12,6 +13,7 @@ interface StarProps {
   centerY?: number;
   radius: number;
   size: number;
+  color?: ColorToken;
 }
 
 export default function Star({
@@ -23,6 +25,7 @@ export default function Star({
   centerY = 0,
   radius,
   size,
+  color = "star",
 }: StarProps) {
   const range = maxRadian - minRadian;
 
@@ -47,14 +50,13 @@ export default function Star({
         height={size}
         viewBox="0 0 24 24"
         fill="none"
-        className="drop-shadow-[0_0_6px_rgba(var(--primary),0.4)]"
-        style={{ filter: "blur(6px)" }}
+        style={{ filter: "blur(6px)", color: resolveColor(color) }}
       >
         {/* ダイヤの形状 */}
         <path
           d="M12 4L18 12L12 20L6 12L12 4Z"
           fill="currentColor"
-          className="text-primary/60"
+          fillOpacity={0.6}
         />
       </svg>
     </motion.div>
