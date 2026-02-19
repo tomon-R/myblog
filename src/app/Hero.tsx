@@ -3,7 +3,11 @@
 import { wdxlLubrifontJPN } from "@/components/typography/fonts";
 import { Typography } from "@/components/typography/Typography";
 import { motion } from "framer-motion";
-import StarrySight from "./_components/StarrySight";
+import dynamic from "next/dynamic";
+
+const StarrySight = dynamic(() => import("./_components/StarrySight"), {
+  ssr: false,
+});
 
 interface HeroProps {
   appName: string;
